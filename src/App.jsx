@@ -39,12 +39,37 @@ function App() {
     lastPos.current = { x: null, y: null };
   };
 
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    lastPos.current = { x: touch.clientX, y: touch.clientY };
+  };
+  
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+    if (lastPos.current.x !== null && lastPos.current.y !== null) {
+      const deltaX = touch.clientX - lastPos.current.x;
+      const deltaY = touch.clientY - lastPos.current.y;
+  
+      setRotationY((prev) => prev + deltaX * 0.01);
+      setRotationX((prev) => prev + deltaY * 0.01);
+  
+      lastPos.current = { x: touch.clientX, y: touch.clientY };
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    lastPos.current = { x: null, y: null };
+  };
+
   return (
     <div
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      style={{ width: '100vw', height: '100vh', cursor: 'grab' }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{ width: '100vw', height: '100vh', cursor: 'grab', touchAction: 'none' }}
     >
       <Canvas camera={{ position: [0, 0, 2] }}>
         <ambientLight intensity={0.5} />
